@@ -28,4 +28,21 @@ public class CalculatorTest {
         int result = calculator.add(a, b);
         assertNotEquals(6, result);
     }
+
+    @Test
+    void secondAddTestCorrect() {
+        int[] nums = {1, 2, 3, 4, 5};
+        int result = calculator.add(nums);
+        assertEquals(15, result);
+    }
+
+    @Test
+    void secondAddTestAcceptZero() {
+        assertEquals(0, calculator.add(0));
+    }
+
+    @Test
+    void secondAddTestAcceptMultipleValue() {
+        assertEquals(3, calculator.add(1, 1, 1));
+    }
 }
