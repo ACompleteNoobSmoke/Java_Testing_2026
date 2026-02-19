@@ -3,6 +3,7 @@ package com.noobsmoke;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -50,5 +51,11 @@ public class CalculatorTest {
     void addGenericTest() {
         var result = calculator.addGeneric(3, 3);
         assertEquals(6, result);
+    }
+
+    @Test
+    void addGenericTestAssert() {
+        var result = calculator.addGeneric(4, 4);
+        assertThat(result).isEqualTo(8);
     }
 }
