@@ -45,4 +45,10 @@ public class CalculatorTest {
     void secondAddTestAcceptMultipleValue() {
         assertEquals(3, calculator.add(1, 1, 1));
     }
+
+    @Test
+    void addGenericTest() {
+        var result = calculator.addGeneric(3, 3);
+        assertEquals(6, result);
+    }
 }
