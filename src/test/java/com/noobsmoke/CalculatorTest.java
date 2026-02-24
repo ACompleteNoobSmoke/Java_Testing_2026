@@ -9,53 +9,59 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class CalculatorTest {
 
-    Calculator calculator;
-    @BeforeEach
-    public void initiate() {
-        this.calculator = new Calculator();
-    }
+    private final Calculator underTest = new Calculator();
+
+    /* During test the flow is the following
+        * 1. Setup
+        * 2. Invocation
+        * 3. Assertion
+    * */
 
 
     @Test
     void firstAddTest() {
         int a = 2, b = 3;
-        int addResult = calculator.add(a, b);
+        int addResult = underTest.add(a, b);
         assertEquals(a + b, addResult);
     }
 
     @Test
     void firstAddTestIncorrect() {
         int a = 2, b = 3;
-        int result = calculator.add(a, b);
+        int result = underTest.add(a, b);
         assertNotEquals(6, result);
     }
 
     @Test
     void secondAddTestCorrect() {
         int[] nums = {1, 2, 3, 4, 5};
-        int result = calculator.add(nums);
+        int result = underTest.add(nums);
         assertEquals(15, result);
     }
 
     @Test
     void secondAddTestAcceptZero() {
-        assertEquals(0, calculator.add(0));
+        assertEquals(0, underTest.add(0));
     }
 
     @Test
     void secondAddTestAcceptMultipleValue() {
-        assertEquals(3, calculator.add(1, 1, 1));
+        assertEquals(3, underTest.add(1, 1, 1));
     }
 
     @Test
     void addGenericTest() {
-        var result = calculator.addGeneric(3, 3);
+        var result = underTest.addGeneric(3, 3);
         assertEquals(6, result);
     }
 
     @Test
     void addGenericTestAssert() {
-        var result = calculator.addGeneric(4, 4);
+        var result = underTest.addGeneric(4, 4);
         assertThat(result).isEqualTo(8);
+    }
+
+    @Test
+    void name() {
     }
 }
