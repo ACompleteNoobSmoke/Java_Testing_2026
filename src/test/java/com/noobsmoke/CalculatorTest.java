@@ -61,7 +61,4 @@ public class CalculatorTest {
         assertThat(result).isEqualTo(8);
     }
 
-    @Test
-    void name() {
-    }
 }
