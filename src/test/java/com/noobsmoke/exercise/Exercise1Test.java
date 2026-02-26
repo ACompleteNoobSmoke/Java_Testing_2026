@@ -147,4 +147,62 @@ public class Exercise1Test {
                 Arguments.arguments(studentsWithoutDuplicates, false)
         );
     }
+
+    @ParameterizedTest
+    @MethodSource("getCoursesList")
+    void testReverseCourses(List<String> coursesList, List<String> reverseCourseList) {
+        List<String> actualReverseCourseList = underTest.reverseCourses(coursesList);
+        assertEquals(reverseCourseList, actualReverseCourseList);
+    }
+
+    private static Stream<Arguments> getCoursesList() {
+        return Stream.of(
+                Arguments.arguments(
+                        List.of(
+                        "Data Structures",
+                        "Algorithms",
+                        "Operating Systems",
+                        "Databases",
+                        "Computer Networks",
+                        "Distributed Systems",
+                        "Software Engineering",
+                        "Cloud Computing"),
+                         List.of(
+                                 "Cloud Computing",
+                                 "Software Engineering",
+                                 "Distributed Systems",
+                                 "Computer Networks",
+                                 "Databases",
+                                 "Operating Systems",
+                                 "Algorithms",
+                                 "Data Structures"
+                         )
+                        )
+        );
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "45, false",
+            "49, false",
+            "50, true",
+            "65, true",
+            "88, true",
+            "100, true"
+    })
+    void testHasPassed(int score, boolean expectedResult) {
+        assertEquals(expectedResult, underTest.hasPassed(score));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "true, Star Student",
+            "false, Needs Improvement"
+    })
+    void testAssignedBadge(boolean isHelpful, String expectedAssignedBehaviour) {
+        String actualBadge = underTest.assignBadge(isHelpful);
+        assertEquals(expectedAssignedBehaviour, actualBadge);
+    }
+
+
 }
