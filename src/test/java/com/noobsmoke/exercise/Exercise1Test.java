@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class Exercise1Test {
 
@@ -34,6 +35,13 @@ public class Exercise1Test {
     void testGetGrade(int score, String expectedGrade) {
         String actualGrade = underTest.getGrade(score);
         assertEquals(expectedGrade, actualGrade);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {200, -1, 1023,})
+    void willThrowError(int score) {
+        Throwable ex = assertThrows(IllegalArgumentException.class, () -> underTest.getGrade(score));
+        assertEquals("Score must be between 0 and 100", ex.getMessage());
     }
 
     @ParameterizedTest
