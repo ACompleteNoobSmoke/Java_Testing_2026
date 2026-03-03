@@ -27,12 +27,13 @@ public class PasswordValidatorTest {
 
     @ParameterizedTest
     @CsvSource({
-            "testing, true",
-            "       testingPassword, true",
-            "max, false",
-            ", false"
+            "testing1!, true",
+            "       testingPassword2@, true",
+            "ma3#, false",
+            ", false",
+            "testingAgain, false"
     })
-    void testingPasswordMinLength(String password, boolean expectedResult) {
+    void testingPasswordScenarios(String password, boolean expectedResult) {
         assertEquals(expectedResult, underTest.test(password));
     }
 }
