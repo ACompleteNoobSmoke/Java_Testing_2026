@@ -7,6 +7,6 @@ public class PasswordValidator implements Predicate<String> {
 
     @Override
     public boolean test(String s) {
-        return s != null && !s.isBlank();
+        return s != null && !s.isBlank() && s.trim().length() >= 5;
     }
 }
