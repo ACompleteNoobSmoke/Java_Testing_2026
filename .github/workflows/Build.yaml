@@ -25,12 +25,76 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v5
         with:
-          java-version: "25"
+          java-version: "21"
           distribution: "zulu"
           cache: maven
 
-      - name: Build, Test, and Enforce Coverage Gate
+      - name: Build
         run: mvn --batch-mode --no-transfer-progress clean verify
+
+      - name: Generate coverage summary in run page
+        if: always()
+        shell: bash
+        run: |
+          python <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+          import os
+
+          report = Path("target/site/jacoco/jacoco.xml")
+          summary_file = os.environ["GITHUB_STEP_SUMMARY"]
+
+          if not report.exists():
+              with open(summary_file, "a", encoding="utf-8") as f:
+                  f.write("## Code Coverage\n\n")
+                  f.write("JaCoCo XML report was not found.\n")
+              raise SystemExit(0)
+
+          tree = ET.parse(report)
+          root = tree.getroot()
+
+          line_counter = None
+          branch_counter = None
+
+          for counter in root.findall("counter"):
+              counter_type = counter.attrib.get("type")
+              if counter_type == "LINE":
+                  line_counter = counter
+              elif counter_type == "BRANCH":
+                  branch_counter = counter
+
+          def ratio(counter):
+              if counter is None:
+                  return None
+              missed = int(counter.attrib["missed"])
+              covered = int(counter.attrib["covered"])
+              total = missed + covered
+              if total == 0:
+                  return 0.0
+              return covered / total * 100
+
+          line_pct = ratio(line_counter)
+          branch_pct = ratio(branch_counter)
+
+          def bar(pct):
+              filled = round(pct / 10)
+              return "🟩" * filled + "⬜" * (10 - filled)
+
+          status = "PASS ✅" if line_pct >= 70 else "FAIL ❌"
+
+          with open(summary_file, "a", encoding="utf-8") as f:
+              f.write("## Code Coverage\n\n")
+              f.write(f"**Threshold:** 70%\n\n")
+              f.write(f"**Result:** {status}\n\n")
+              f.write("| Metric | Coverage |\n")
+              f.write("|---|---:|\n")
+              f.write(f"| Line | {line_pct:.2f}% |\n")
+              if branch_pct is not None:
+                  f.write(f"| Branch | {branch_pct:.2f}% |\n")
+
+              f.write("\n")
+              f.write(f"**Line Coverage Bar**\n\n{bar(line_pct)} {line_pct:.2f}%\n")
+          PY
 
       - name: Show JaCoCo output
         if: always()
@@ -38,9 +102,9 @@ jobs:
           ls -R target || true
           test -f target/site/jacoco/jacoco.xml
 
-      - name: Upload Coverage Artifacts
+      - name: Upload Coverage Artifact
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: |
@@ -53,8 +117,8 @@ jobs:
         if: always()
         uses: codecov/codecov-action@v5
         with:
-          files: './target/site/jacoco/*.xml'
-          #          flags: unittests
+          files: ./target/site/jacoco/jacoco.xml
+#          flags: unittests
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
