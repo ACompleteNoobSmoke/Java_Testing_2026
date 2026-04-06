@@ -39,7 +39,7 @@ public class ProductService {
     }
 
     public UUID saveNewProduct(NewProductRequest product) {
-        UUID id = UUID.randomUUID();wq
+        UUID id = UUID.randomUUID();
         Product newProduct = new Product(
                 id,
                 product.name(),
