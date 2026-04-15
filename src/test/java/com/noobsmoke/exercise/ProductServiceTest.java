@@ -3,35 +3,23 @@ package com.noobsmoke.exercise;
 import com.noobsmoke.MyTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 
 public class ProductServiceTest extends MyTestUtils {
 
     private ProductRepository productRepository;
-
-
-    private Stream<Product> productStream;
-
-
-    private Stream<ProductResponse> productResponseStream;
 
     private ProductService underTest;
 
@@ -180,7 +168,7 @@ public class ProductServiceTest extends MyTestUtils {
     void shouldThrowExceptionWhenUpdateProductNotFound() {
         UUID id = UUID.randomUUID();
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> underTest.getProductById(id));
+                () -> underTest.updateProduct(id, null));
 
         assertEquals("product with id [" + id + "] not found", ex.getMessage());
     }
