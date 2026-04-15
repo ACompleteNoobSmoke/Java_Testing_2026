@@ -146,7 +146,95 @@ public class ProductServiceTest extends MyTestUtils {
        assertEquals(price, captor.getValue().getPrice());
        assertEquals(imageUrl, captor.getValue().getImageUrl());
        assertEquals(stock, captor.getValue().getStockLevel());
+    }
 
+    @Test
+    void shouldUpdateProduct() {
+        Product originalProduct =
+                createNewProduct("XBOX", "Console", BigDecimal.TEN, "xbox.jpeg", 20);
+        UpdateProductRequest newProductRequest = new UpdateProductRequest(
+                "Playstation 5",
+                "Sony Console",
+                BigDecimal.ONE,
+                "ps5.jpeg",
+                21,
+                true
+        );
+
+        when(productRepository.findById(originalProduct.getId())).thenReturn(Optional.of(originalProduct));
+        underTest.updateProduct(originalProduct.getId(), newProductRequest);
+        ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
+
+        verify(productRepository).save(captor.capture());
+
+        assertEquals(originalProduct.getId(), captor.getValue().getId());
+        assertEquals(newProductRequest.name(), captor.getValue().getName());
+        assertEquals(newProductRequest.description(), captor.getValue().getDescription());
+        assertEquals(newProductRequest.price(), captor.getValue().getPrice());
+        assertEquals(newProductRequest.imageUrl(), captor.getValue().getImageUrl());
+        assertEquals(newProductRequest.stockLevel(), captor.getValue().getStockLevel());
+        assertEquals(newProductRequest.isPublished(), captor.getValue().getIsPublished());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUpdateProductNotFound() {
+        UUID id = UUID.randomUUID();
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> underTest.getProductById(id));
+
+        assertEquals("product with id [" + id + "] not found", ex.getMessage());
+    }
+
+    @Test
+    void shouldReturnSameValuesWhenUpdateWithSameValues() {
+        String name = "PC Gaming";
+        String description =  "PC Master Race";
+        BigDecimal price = BigDecimal.TEN;
+        String imageUrl = "PC Master Race";
+        Integer stock = 100;
+        Product product = createNewProduct(name, description, price, imageUrl, stock);
+        UpdateProductRequest updateProductRequest = new UpdateProductRequest(
+                name,
+                description,
+                price,
+                imageUrl,
+                stock,
+                false
+        );
+
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
+        underTest.updateProduct(product.getId(), updateProductRequest);
+        ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
+        verify(productRepository).save(captor.capture());
+
+        assertEquals(product.getId(), captor.getValue().getId());
+        assertEquals(name, captor.getValue().getName());
+        assertEquals(description, captor.getValue().getDescription());
+        assertEquals(price, captor.getValue().getPrice());
+        assertEquals(imageUrl, captor.getValue().getImageUrl());
+        assertEquals(stock, captor.getValue().getStockLevel());
+        assertEquals(updateProductRequest.isPublished(), captor.getValue().getIsPublished());
+
+    }
+
+
+    private Product createNewProduct(String name, String description, BigDecimal price, String imageUrl, Integer stock ) {
+        UUID id = UUID.randomUUID();
+        Instant createdAt = Instant.now();
+        Instant updatedAt = Instant.now().minusMillis(10000);
+        Instant deletedAt = Instant.now().minusMillis(10001);
+        return new Product(
+                id,
+                name,
+                description,
+                price,
+                imageUrl,
+                stock,
+                createdAt,
+                updatedAt,
+                deletedAt,
+                false
+        );
     }
 
 }
