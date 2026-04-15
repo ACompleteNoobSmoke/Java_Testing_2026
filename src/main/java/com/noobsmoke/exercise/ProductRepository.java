@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-interface ProductRepository {
+public interface ProductRepository {
     List<Product> findAll();
     Optional<Product> findById(UUID id);
     boolean existsById(UUID id);
